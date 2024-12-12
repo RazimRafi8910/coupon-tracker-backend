@@ -9,6 +9,7 @@ dotenv.config()
 const app = express()
 
 const PORT = process.env.PORT || 3001
+const PRODUCTION = process.env.PRODUCTION
 
 const frontendURL = PRODUCTION ? process.env.FRONTEDN_URL : 'http://localhost:5173'
 
