@@ -9,11 +9,14 @@ dotenv.config()
 const app = express()
 
 const PORT = process.env.PORT || 3001
+
+const frontendURL = PRODUCTION ? process.env.FRONTEDN_URL : 'http://localhost:5173'
+
 connectDB()
 
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: frontendURL,
     credentials:true,
     methods: ["GET", "POST"],
 }))
