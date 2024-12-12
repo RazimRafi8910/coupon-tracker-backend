@@ -10,9 +10,8 @@ const app = express()
 
 const PORT = process.env.PORT || 3001
 const PRODUCTION = process.env.PRODUCTION
-
-const frontendURL = PRODUCTION ? process.env.FRONTEDN_URL : 'http://localhost:5173'
-
+const frontendURL = PRODUCTION == 1 ? process.env.FRONTEDN_URL : 'http://localhost:5173'
+console.log(frontendURL)
 connectDB()
 
 app.use(express.urlencoded({ extended: false }));
