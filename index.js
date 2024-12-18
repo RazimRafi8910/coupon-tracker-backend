@@ -2,6 +2,7 @@ import express from 'express'
 import cookieParser from 'cookie-parser'
 import dotenv from 'dotenv'
 import authRoutes from './routes/authRoutes.js'
+import appRoutes from './routes/appRoutes.js'
 import connectDB from './service/DBconnect.js'
 import cors from 'cors'
 
@@ -23,7 +24,8 @@ app.use(cors({
 app.use(express.json())
 app.use(cookieParser())
 
-app.use('/',authRoutes)
+app.use('/', authRoutes)
+app.use('/manager',appRoutes)
 
 
 app.listen(PORT, () => {

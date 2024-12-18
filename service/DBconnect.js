@@ -16,7 +16,9 @@ async function connectDB() {
 }
 
 //createUSer()
+//current std id = 100
 //razim2
+//manager
 //razim
 //razim rafi
 
