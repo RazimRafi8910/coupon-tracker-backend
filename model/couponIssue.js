@@ -14,15 +14,29 @@ const CouponIssueRegister = mongoose.Schema({
         type: Number,
         required: true
     },
+    typeOfRegister: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     couponNo: {
         type: Number,
         required: true
     },
-    couponStarting: {
+    leaveStart: {
         type: Number,
         required: true
     },
-    couponEnding: {
+    issuedDate: {
+        type: Date,
+        required: true,
+        default: Date.now
+    },
+    returnedData: {
+        type: Date,
+        required: false
+    },
+    leaveEnd: {
         type: Number,
         required: true
     },
@@ -30,6 +44,10 @@ const CouponIssueRegister = mongoose.Schema({
         type: [Number],
         required: true,
         default: couponLeaves
+    },
+    commision: {
+        type: Number,
+        required: true
     },
     status: {
         type: Number,

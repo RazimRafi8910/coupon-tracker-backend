@@ -1,7 +1,21 @@
 import CouponBook from '../model/couponBook.js'
+import CouponRegister from '../model/couponIssue.js';
 import User from '../model/users.js'
 
 
+//manager dashboard
+export const managerDashboard = async (req, res) => {
+    try {
+        const students = await User.find({ role: 1 }).countDocuments();
+        const couponBooks = await CouponBook.find().countDocuments();
+        const couponRegisters = await CouponRegister.find().countDocuments();
+
+        return res.status(200).json({ success: true, message: "dashboard data founded", data: { students, couponBooks, couponRegisters } });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ success: false, message: "internal server error" })
+    }
+}
 //coupons
 export const couponsData = async (req, res) => {
     try {
@@ -67,7 +81,7 @@ export const addCoupons = async (req,res) => {
 //students
 export const studentsData = async (req, res) => {
     try {
-        const students = await User.find().limit(25)
+        const students = await User.find({role : 1}).limit(25)
         if (!students) {
             return res.status(404).json({ success: false, message: "students not found" });
         }
@@ -76,5 +90,54 @@ export const studentsData = async (req, res) => {
     } catch (error) {
         console.log(error)
         res.status(500).json({success:false, message:"internal server error"})
+    }
+}
+
+export const studentSearch = async (req, res) => {
+    try {
+        const { name } = req.query;
+        if (!name) {
+            return res.status(400).json({ success: false, message: "student id not found or invalid" });
+        }
+
+        const users = await this.UserModel.find({ name: { $regex: name, $options: 'i' } });
+
+        if (!users[0]) {
+            return res.status(400), json({ success: false, message: "no matching name found" });
+        }
+
+        return res.status(200).json({ success: true, message: "student Found", data: student });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ success: false, message: "internal server error" })
+    }
+}
+
+export const studentDetails = async (req, res) => {
+    try {
+        const studentId = req.params.studentid;
+        if (!studentId) {
+            return res.status(400).json({ success: false, message: "student id not found or invalid" });
+        }
+
+        let student = await User.findOne({ studentId }).lean();
+
+        if (!student) {
+            return res.status(400), json({ success: false, message: "not found student" });
+        }
+
+        const studentCouponRegister = await CouponRegister.find({ issuedTo: student.studentId });
+        
+        if (studentCouponRegister) {
+            student = {
+                ...student,
+                register:studentCouponRegister
+            }
+        }
+
+        return res.status(200).json({ success: true, message: "student Found", data: student });
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ success: false, message: "internal server error" })
     }
 }

@@ -39,12 +39,13 @@ export const loginUser = async (req, res) => {
         res.cookie("token", token, {
             httpOnly: true,
             maxAge: 1000 * 60 * 60 * 24 * 60,
-            sameSite: "None",
+            sameSite: process.env.PRODUCTION == 1 ? "none" : "lax",
             secure: process.env.PRODUCTION == 1 ,
         });
 
         const responseUser = {
             username,
+            id:user.studentId,
             role: user.role,
         };
 

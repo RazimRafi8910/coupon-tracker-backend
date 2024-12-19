@@ -1,4 +1,5 @@
 import User from "../model/users.js"
+import AppData from "../model/appData.js"
 
 export const createUSer = async () => {
     try {
