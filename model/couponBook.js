@@ -27,3 +27,8 @@ const CouponBookSchema = mongoose.Schema({
 const CouponBook = mongoose.model('couponBook', CouponBookSchema);
 
 export default CouponBook
+
+
+// status 1 - assiged
+// stauts 2 - completed
+// status 3 - payment recived

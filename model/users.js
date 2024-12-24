@@ -24,7 +24,8 @@ const UserSchema = mongoose.Schema({
     },
     studentId: {
         type: Number,
-        required:true
+        required: true,
+        index:true
     },
     batch: {
         type: String,
@@ -66,3 +67,7 @@ const UserSchema = mongoose.Schema({
 const User = mongoose.model('user', UserSchema)
 
 export default User
+
+// 1 - user
+// 2 - coordinator
+// 3 - manager

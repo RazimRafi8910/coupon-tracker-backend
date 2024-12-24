@@ -59,3 +59,6 @@ const CouponIssueRegister = mongoose.Schema({
 const CouponRegister = mongoose.model('couponRegiester', CouponIssueRegister);
 
 export default CouponRegister
+
+// type 1 - to user
+// type 2 - to coordinator
