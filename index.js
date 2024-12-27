@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors({
     origin: frontendURL,
     credentials:true,
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST","PUT"],
 }))
 app.use(express.json())
 app.use(cookieParser())

@@ -21,6 +21,16 @@ const appData = mongoose.Schema({
         required: true,
         default: 10000,
     },
+    totalAmountCollected: {
+        type: Number,
+        required: true,
+        default:0
+    },
+    totalCouponCreated: {
+        type: Number,
+        required: true,
+        default:0
+    }
 })
 
 const AppData = mongoose.model('appData', appData);

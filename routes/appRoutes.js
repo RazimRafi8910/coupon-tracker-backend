@@ -1,7 +1,20 @@
 import express from 'express'
 import { verifyManager } from '../middleware/verifyManager.js'
 import {verifyToken} from '../middleware/verifyUser.js'
-import { managerDashboard,addCoupons, couponsData, searchCouponByNo, studentDetails, studentsData, studentSearch, addStudent,coordinatorData, coordinatorDetails } from '../controller/managerController.js'
+import {
+    managerDashboard,
+    addCoupons,
+    couponsData,
+    searchCouponByNo,
+    studentDetails,
+    studentsData,
+    studentSearch,
+    addStudent,
+    coordinatorData,
+    coordinatorDetails,
+    assignCouponToCoordinator,
+    updateRecivedamount,
+} from '../controller/managerController.js'
 import { createCouponIssueRegister } from '../controller/CouponController.js'
 
 const router = express()
@@ -18,6 +31,8 @@ router.post('/student/add', verifyToken, verifyManager, addStudent)
 //manager coordinators
 router.get('/coordinator', verifyToken, verifyManager, coordinatorData)
 router.get('/coordinator/:coordinatorId', verifyToken, verifyManager, coordinatorDetails)
+router.post('/coordinator/:coordinatorId/assign', verifyToken, verifyManager, assignCouponToCoordinator)
+router.put('/coordinator/:coordinatorId/update', verifyToken, verifyManager, updateRecivedamount);
 
 //manager coupons
 router.get('/coupon', verifyToken, verifyManager, couponsData)

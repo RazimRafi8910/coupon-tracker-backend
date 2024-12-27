@@ -1,6 +1,7 @@
 import AppData from '../model/appData.js';
 import CouponBook from '../model/couponBook.js'
 import CouponRegister from '../model/couponIssue.js';
+import CoordinatorRegister from '../model/coordinatorRegister.js';
 import User from '../model/users.js'
 
 
@@ -213,6 +214,9 @@ export const coordinatorDetails = async (req, res) => {
             return res.status(404).json({ success: false, message: "Coordinator not found" });
         }
 
+        const result = await CoordinatorRegister.findOne({ coordinatorId: studentId }).populate('couponsAssigend')
+        
+
         const coordinatorRegister = await CouponRegister.aggregate([
             { $match: {issuedBy:Number(studentId)} },
             {
@@ -228,6 +232,7 @@ export const coordinatorDetails = async (req, res) => {
 
         const data = {
             ...coordinator,
+            coordinatorRegister: result,
             register:coordinatorRegister
         }
 
@@ -236,5 +241,69 @@ export const coordinatorDetails = async (req, res) => {
     } catch (err) {
         console.log(err)
         res.status(500).json({ success: false, message: "internal server error" })
+    }
+}
+
+export const assignCouponToCoordinator = async(req, res) =>{
+    try {
+        const coordinatorId = req.params.coordinatorId;
+        const { bookNo } = req.body;
+        if (!coordinatorId || !bookNo) {
+            return res.status(409).json({ sucess: false, message: "Invalid or missing input" });
+        }
+        const coordinator = await User.findOne({ studentId: coordinatorId });
+        const couponBook = await CouponBook.findOne({ bookId: bookNo });
+
+        if (!coordinator || !couponBook) {
+            return res.status(409).json({ success: false, message: "Coupon not assigned!, Invalid Inputs" });
+        }
+        
+        if (couponBook.status !== 0) {
+            return res.status(400).json({ sucess: false, message: "Coupon is already assigned" });
+        }
+
+        let register = await CoordinatorRegister.findOne({ coordinatorId });
+        
+        if (!register) {
+            register = await CoordinatorRegister.create({
+                coordinatorId,
+                couponsAssigend: [couponBook._id]
+            }); 
+        } else {
+            const couponsAssigend = register.couponsAssigend;
+            couponsAssigend.push(couponBook._id);
+            register = await CoordinatorRegister.updateOne({ coordinatorId }, { couponsAssigend });
+        };
+
+        await CouponBook.updateOne({ _id: couponBook._id }, { status:1 } );
+        
+
+        return res.status(200).json({ success: true, message: "Coupons assigned", data: register });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "internal server error" });
+    }
+}
+
+export const updateRecivedamount = async (req, res) => {
+    try {
+        const coordinatorId = req.params.coordinatorId;
+        const { amount } = req.body;
+        console.log(amount)
+        if (!coordinatorId || !amount) {
+            return res.status(400).json({ success: false, message: "invalid or missing Input" });
+        }
+
+        const coordinatorRegister = await CoordinatorRegister.findOneAndUpdate({ coordinatorId },{ $inc:{recivedAmount : amount}});
+
+        if (!coordinatorRegister) {
+            return res.status(409).json({ success: false, message: "Coordinator Register not found" });
+        }
+
+
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ success: false, message: "internal server error" });
     }
 }
