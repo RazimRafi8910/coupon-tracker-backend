@@ -128,7 +128,7 @@ export const addStudent = async (req, res) => {
 
 export const studentsData = async (req, res) => {
     try {
-        const students = await User.find({role : 1}).limit(25)
+        const students = await User.find().limit(25)
         if (!students) {
             return res.status(404).json({ success: false, message: "students not found" });
         }
@@ -143,17 +143,17 @@ export const studentsData = async (req, res) => {
 export const studentSearch = async (req, res) => {
     try {
         const { name } = req.query;
-        if (!name) {
-            return res.status(400).json({ success: false, message: "student id not found or invalid" });
-        }
+        // if (!name) {
+        //     return res.status(400).json({ success: false, message: "student id not found or invalid" });
+        // }
 
-        const users = await this.UserModel.find({ name: { $regex: name, $options: 'i' } });
+        const users = await User.find({ name: { $regex: name, $options: 'i' } });
 
         if (!users[0]) {
             return res.status(400), json({ success: false, message: "no matching name found" });
         }
 
-        return res.status(200).json({ success: true, message: "student Found", data: student });
+        return res.status(200).json({ success: true, message: "student Found", data: users });
     } catch (error) {
         console.log(error)
         res.status(500).json({ success: false, message: "internal server error" })
@@ -163,6 +163,7 @@ export const studentSearch = async (req, res) => {
 export const studentDetails = async (req, res) => {
     try {
         const studentId = req.params.studentid;
+        
         if (!studentId) {
             return res.status(400).json({ success: false, message: "student id not found or invalid" });
         }
@@ -289,7 +290,7 @@ export const updateRecivedamount = async (req, res) => {
     try {
         const coordinatorId = req.params.coordinatorId;
         const { amount } = req.body;
-        console.log(amount)
+        
         if (!coordinatorId || !amount) {
             return res.status(400).json({ success: false, message: "invalid or missing Input" });
         }
@@ -307,3 +308,74 @@ export const updateRecivedamount = async (req, res) => {
         res.status(500).json({ success: false, message: "internal server error" });
     }
 }
+
+//register controller
+export const getRegisterData = async (req, res) => {
+    try {
+        const { bookNo } = req.query;
+        const lookupOptions = [
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'issuedTo',
+                    foreignField: 'studentId',
+                    as: 'issuedToUser'
+                }
+            },
+            { $unwind: '$issuedToUser' },
+            {
+                $project: {
+                    commision: 1,
+                    couponNo: 1,
+                    issueId: 1,
+                    issuedBy: 1,
+                    issuedDate: 1,
+                    issuedTo: 1,
+                    leaveEnd: 1,
+                    leaveStart: 1,
+                    status: 1,
+                    typeOfRegister: 1,
+                    _id: 1,
+                    "issuedToUser.name": 1,
+                    "issuedToUser.username": 1,
+                    "issuedToUser.studentId": 1,
+                }
+            }
+        ]
+        let register
+        if (bookNo) {
+            //register = await CouponRegister.find({ couponNo: bookNo });
+            register = await CouponRegister.aggregate([
+                { $match: { couponNo: Number(bookNo) } },
+                ...lookupOptions
+            ]);
+        } else {
+            // register = await CouponRegister.find().limit(35).lean()
+            register = await CouponRegister.aggregate([
+                { $limit: 30},
+                { $match: {} },
+                ...lookupOptions
+            ]);
+        }
+
+        
+        return res.status(200).json({ success: true, message: "register found", data: register });
+    } catch (error) {
+        console.log(error);
+        res.status(200).json({ success: false, message: "internal server error" });
+    }
+}
+/*
+const coordinatorRegister = await CouponRegister.aggregate([
+            { $match: {issuedBy:Number(studentId)} },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'issuedTo',
+                    foreignField: 'studentId',
+                    as:'issuedToUser'
+                }
+            },
+            { $unwind: '$issuedToUser' }
+        ])
+*/

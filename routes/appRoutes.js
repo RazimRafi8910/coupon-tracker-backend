@@ -14,6 +14,7 @@ import {
     coordinatorDetails,
     assignCouponToCoordinator,
     updateRecivedamount,
+    getRegisterData,
 } from '../controller/managerController.js'
 import { createCouponIssueRegister } from '../controller/CouponController.js'
 
@@ -24,8 +25,8 @@ router.get('/dashboard', verifyToken, verifyManager, managerDashboard)
 
 //manager students
 router.get('/students', verifyToken, verifyManager, studentsData)
-router.get('/student/:studentid', verifyToken, verifyManager,studentDetails )
 router.get('/student/search/', verifyToken, verifyManager, studentSearch)
+router.get('/student/:studentid', verifyToken, verifyManager,studentDetails )
 router.post('/student/add', verifyToken, verifyManager, addStudent)
 
 //manager coordinators
@@ -33,6 +34,9 @@ router.get('/coordinator', verifyToken, verifyManager, coordinatorData)
 router.get('/coordinator/:coordinatorId', verifyToken, verifyManager, coordinatorDetails)
 router.post('/coordinator/:coordinatorId/assign', verifyToken, verifyManager, assignCouponToCoordinator)
 router.put('/coordinator/:coordinatorId/update', verifyToken, verifyManager, updateRecivedamount);
+
+//regiset
+router.get('/register', verifyToken, verifyManager, getRegisterData)
 
 //manager coupons
 router.get('/coupon', verifyToken, verifyManager, couponsData)
