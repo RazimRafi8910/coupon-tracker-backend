@@ -44,4 +44,5 @@ router.get('/coupon/:search_no', verifyToken, verifyManager, searchCouponByNo)
 router.post('/coupon/add', verifyToken, verifyManager, addCoupons)
 router.post('/coupon/assign', verifyToken, createCouponIssueRegister)
 
+
 export default router   

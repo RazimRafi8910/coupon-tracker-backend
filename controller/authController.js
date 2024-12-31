@@ -78,7 +78,7 @@ export const logoutUser = async (req, res) => {
 
 export const getUserData = async (req, res) => {
     try {
-        const userId = req.userId;
+        const userId = req.user.userId;
         const user = await User.findOne({ _id: userId });
         if (!user) {
             return res

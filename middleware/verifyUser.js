@@ -10,9 +10,10 @@ export const verifyToken = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_KEY);
     if (!decoded) {
       return res.status(401).json({ success: false, message: "Unauthorized" });
-    }
-      req.userId = decoded.userId;
-      req.userRole = decoded.userRole;
+      }
+      
+      req.user = decoded
+
     next();
   } catch (error) {
     console.log(error);
